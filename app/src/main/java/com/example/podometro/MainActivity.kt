@@ -2,6 +2,7 @@ package com.example.podometro
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -34,6 +35,16 @@ class MainActivity : AppCompatActivity() {
         val sensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
         Log.d("sensorExample", sensor.toString())
 
+
+
+        val sensorGiroscopio: Sensor?=sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+        Log.d("sensorExample", sensorGiroscopio.toString())
+
+
+
+
+
+
         var pasos: Float=0.0F
         val sensorEventListener: SensorEventListener=object : SensorEventListener{
 
@@ -58,7 +69,34 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_FASTEST)
+
+        val sensorEventListenerSecond: SensorEventListener = object : SensorEventListener{
+            override fun onSensorChanged(sensorEvent: SensorEvent) {
+                Log.d("giros", "${sensorEvent.values[0]}")
+               if(sensorEvent.values[2] > 0.5F)
+               {
+                   Log.d("saludo","es mayor")
+                   binding.Fondo.setBackgroundColor(Color.BLUE)
+               }else if (sensorEvent.values[2] < -0.5F )
+               {
+                   binding.Fondo.setBackgroundColor(Color.GRAY)
+                   Log.d("saludo","es menor")
+               }
+            }
+
+            override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+                //TODO("Not yet implemented")
+            }
+        }
+
+        sensorManager.registerListener(sensorEventListenerSecond, sensorGiroscopio, SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+
+
+
 
     }
+
+
+
 }
